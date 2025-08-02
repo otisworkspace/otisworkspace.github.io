@@ -6,20 +6,70 @@
   <title>QiXueZhe's Blog</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .greeting {
+    body.night {
+      background-image: url('img/night-sky.jpg') !important;
+      color: #cfcfcf;
+    }
+    .night .gradient-text {
+      background: linear-gradient(90deg, #c9d6ff, #e2e2e2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .greeting, .date-display {
       font-size: 1.4em;
       margin-top: 10px;
       color: rgba(255, 255, 255, 0.9);
     }
+    .avatar {
+      transition: transform 0.2s;
+    }
+    .avatar.shake {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
+    .typewriter-text {
+      overflow: hidden;
+      border-right: .15em solid orange;
+      white-space: nowrap;
+      animation: typing 3s steps(30, end), blink-caret .75s step-end infinite;
+    }
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: orange; }
+    }
+    .toggle-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      padding: 8px 12px;
+      font-size: 1.2em;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+      backdrop-filter: blur(5px);
+    }
   </style>
 </head>
 <body>
+  <button class="toggle-button" onclick="toggleNightMode()">🌙/☀️</button>
   <div class="background-overlay"></div>
   <div class="container">
-    <img src="img/tou.jpg" alt="Avatar" class="avatar">
-    <h1 class="gradient-text">Hello, I am QiXueZhe</h1>
+    <img src="img/tou.jpg" alt="Avatar" class="avatar" id="avatar">
+    <h1 class="gradient-text typewriter-text">Hello, I am QiXueZhe</h1>
     <p class="intro">Welcome to my personal blog.</p>
     <div class="greeting" id="greeting"></div>
+    <div class="date-display" id="date"></div>
   </div>
 
   <script>
@@ -31,9 +81,10 @@
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundAttachment = 'fixed';
 
-    // 显示北京时间 + 英文问候语
+    // 显示北京时间 + 英文问候语 + 日期
     function showGreeting() {
       const greetingEl = document.getElementById('greeting');
+      const dateEl = document.getElementById('date');
       const now = new Date();
       const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
       const beijingTime = new Date(utc + 8 * 3600000); // 北京时间 UTC+8
@@ -52,9 +103,24 @@
 
       greeting += ` (Beijing Time: ${beijingTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })})`;
       greetingEl.textContent = greeting;
+
+      const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      dateEl.textContent = `📅 ${beijingTime.toLocaleDateString('en-US', dateOptions)}`;
     }
 
     showGreeting();
+
+    // 点击头像颤动
+    const avatar = document.getElementById('avatar');
+    avatar.addEventListener('click', () => {
+      avatar.classList.add('shake');
+      setTimeout(() => avatar.classList.remove('shake'), 500);
+    });
+
+    // 日夜切换
+    function toggleNightMode() {
+      document.body.classList.toggle('night');
+    }
   </script>
 </body>
 </html>
